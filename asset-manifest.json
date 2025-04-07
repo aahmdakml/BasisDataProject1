@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/Simple-ToDo-List-App/static/css/main.691e510a.css",
+    "main.js": "/Simple-ToDo-List-App/static/js/main.8222becc.js",
+    "static/media/BG1.jpg": "/Simple-ToDo-List-App/static/media/BG1.2202fa45c089f2d7070e.jpg",
+    "index.html": "/Simple-ToDo-List-App/index.html",
+    "main.691e510a.css.map": "/Simple-ToDo-List-App/static/css/main.691e510a.css.map",
+    "main.8222becc.js.map": "/Simple-ToDo-List-App/static/js/main.8222becc.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.691e510a.css",
+    "static/js/main.8222becc.js"
+  ]
+}
