@@ -21,7 +21,8 @@ app.post("/todos", async (req, res) => {
     try {
         const { description, completed} = req.body;
         const newTodo = await pool.query(
-            "INSERT INTO todos (todo_desc) VALUES ($1) RETURNING *", [todo_desc]
+            "INSERT INTO todos (todo_desc, todo_completed) VALUES ($1, $2) RETURNING *", 
+            [description, completed]
         );
         res.json(newTodo.rows[0]);
     }catch (err){
@@ -30,10 +31,9 @@ app.post("/todos", async (req, res) => {
 });
 
 //get all todo 
-
 app.get("/todos", async(req, res) => {
     try{
-        const allTodos = await pool.query("SELECT * from todos");
+        const allTodo = await pool.query("SELECT * from todos");
         res.json(allTodo.rows);
     } catch (err){
         res.json(err);
@@ -41,7 +41,6 @@ app.get("/todos", async(req, res) => {
 });
 
 //get a todo
-
 app.get("/todos/:id", async(req, res) => {
     try {
         const { id } = req.params;
