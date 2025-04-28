@@ -21,7 +21,7 @@ app.post("/todos", async (req, res) => {
     try {
         const { description, completed} = req.body;
         const newTodo = await pool.query(
-            "INSERT INTO todos (todo_desc, todo_completed) VALUES ($1, $2) RETURNING *", 
+            "INSERT INTO todos (description, completed) VALUES ($A, $B) RETURNING *", 
             [description, completed]
         );
         res.json(newTodo.rows[0]);
@@ -43,10 +43,10 @@ app.get("/todos", async(req, res) => {
 //get a todo
 app.get("/todos/:id", async(req, res) => {
     try {
-        const { id } = req.params;
+        const { todo_id } = req.params;
         const todo = await pool.query(
-            "SELECT * from todos WHERE todo_id = $1", 
-            [id]
+            "SELECT * from todos WHERE todo_id = $A", 
+            [todo_id]
         );
             
         res.json(todo.rows[0]);
@@ -59,11 +59,11 @@ app.get("/todos/:id", async(req, res) => {
 //update todo
 app.put("/todos/:id", async(req,res) => {
     try {
-        const { id } = req.params;
+        const { todo_id } = req.params;
         const { description, completed } = req.body;
         const updateTodo = await pool.query(
-            "UPDATE todo SET todo_desc = $1, todo_completed = $2 WHERE todo_id = $3", 
-            [description, completed, id]);
+            "UPDATE todo SET description = $A, completed = $B WHERE todo_id = $C", 
+            [description, completed, todo_id]);
 
         res.json("Todo was updated!");
     }catch(err){
@@ -74,9 +74,10 @@ app.put("/todos/:id", async(req,res) => {
 //delete todo
 app.delete("/todos/:id", async(res,req) => {
     try {
-        const { id } = req.params;
+        const { todo_id } = req.params;
         const deleteTodo = await pool.query("DELETE FROM todos WHERE todo_id = $1",
-            [id]);
+            [todo_id]
+        );
         res.json("Todo was deleted");
     } catch(err){
         res.json(err);
