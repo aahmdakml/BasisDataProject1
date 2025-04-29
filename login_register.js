@@ -2,11 +2,13 @@ const express = require('express');
 const bodyParser = require('body-parser');  
 const bcrypt = require('bcrypt');  
 const pool = require('./db');  
+const jwt = require('jsonwebtoken');
 
 const app = express();  
 app.use(bodyParser.json());  
 
 const saltRounds = 12;  
+const JWT_SECRET = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6ImJlbnNvbiBib29uZSIsImlhdCI6MTc0NTk1MTYzNCwiZXhwIjoxNzQ1OTU1MjM0fQ.C3FuNlnRvFMQFO8-p3sKkAaiwlKIWDnbuUXfMdEut4A';
 
 // REGISTER  
 app.post('/register', async (req, res) => {  
@@ -51,6 +53,9 @@ app.post('/login', async (req, res) => {
     if (!match) {  
       return res.status(400).json({ message: 'Invalid username or password' });  
     }  
+
+    const token = jwt.sign({ user_id: user.user_id, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
+    console.log("Login successful:", token);
 
     res.json({ message: 'Login successful', userId: user.user_id });  
   } catch (err) {  
