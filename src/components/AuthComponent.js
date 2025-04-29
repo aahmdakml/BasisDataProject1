@@ -1,23 +1,33 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import '../App.css';
 
 const AuthComponent = ({ onLogin }) => {
   // States
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [users, setUsers] = useState([]);
   const [error, setError] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
 
-  // Load users
+  const API_URL = 'https://your-backend-api.com/api'; // Replace with your backend API URL
+
+  // Fetch users from backend
   useEffect(() => {
-    const savedUsers = JSON.parse(localStorage.getItem('todoAppUsers')) || [];
-    setUsers(savedUsers);
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/users`); // Fetch users
+        setUsers(response.data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+    fetchUsers();
   }, []);
 
-  // Register
-  const handleRegister = (e) => {
+  // Register user
+  const handleRegister = async (e) => {
     e.preventDefault();
     
     // Validation
@@ -26,34 +36,35 @@ const AuthComponent = ({ onLogin }) => {
       return;
     }
     
-    // Check Uname
+    // Check if username exists
     if (users.some(user => user.username === username)) {
       setError('Username exists');
       return;
     }
     
-    // Create new user
-    const newUser = { username, password };
-    const updatedUsers = [...users, newUser];
-    
-    // Save to local
-    localStorage.setItem('todoAppUsers', JSON.stringify(updatedUsers));
-    setUsers(updatedUsers);
-    
-    // Clear form & regis success
-    setUsername('');
-    setPassword('');
-    setError('Registration successful!');
-    
-    // Switch to login
-    setTimeout(() => {
-      setError('');
-      setIsLogin(true);
-    }, 1500);
+    // Register new user
+    try {
+      const newUser = { username, password };
+      const response = await axios.post(`${API_URL}/register`, newUser); // POST the new user to backend
+      setUsers([...users, response.data]);
+
+      setUsername('');
+      setPassword('');
+      setError('Registration successful!');
+
+      // Switch to login form after successful registration
+      setTimeout(() => {
+        setError('');
+        setIsLogin(true);
+      }, 1500);
+    } catch (error) {
+      console.error("Error registering user:", error);
+      setError('Error registering user');
+    }
   };
 
-  // Login
-  const handleLogin = (e) => {
+  // Login user
+  const handleLogin = async (e) => {
     e.preventDefault();
     
     // Validation
@@ -62,45 +73,48 @@ const AuthComponent = ({ onLogin }) => {
       return;
     }
     
-    // Find user
-    const user = users.find(user => user.username === username && user.password === password);
-    
-    if (user) {
-      // Success
-      setError('');
-      onLogin(user.username); 
-    } else {
-      setError('Invalid credentials');
+    try {
+      const user = users.find(user => user.username === username && user.password === password);
+      
+      if (user) {
+        setError('');
+        onLogin(user.username); // Call onLogin to pass the username to the parent component
+      } else {
+        setError('Invalid credentials');
+      }
+    } catch (error) {
+      console.error("Error logging in:", error);
+      setError('Error logging in');
     }
   };
 
-  // User select
+  // Select user for password verification
   const handleUserSelect = (user) => {
     setSelectedUser(user);
     setUsername(user.username);
   };
 
   // Delete user
-  const handleDeleteUser = (e, usernameToDelete) => {
+  const handleDeleteUser = async (e, usernameToDelete) => {
     e.stopPropagation(); // Prevent triggering user selection
-    
-    // Filter out the user to delete
-    const updatedUsers = users.filter(user => user.username !== usernameToDelete);
-    
-    // Save to localStorage
-    localStorage.setItem('todoAppUsers', JSON.stringify(updatedUsers));
-    setUsers(updatedUsers);
+
+    try {
+      await axios.delete(`${API_URL}/users/${usernameToDelete}`); // DELETE the user from backend
+      setUsers(users.filter(user => user.username !== usernameToDelete)); // Update local user list
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
   };
 
-  // Verify password
-  const handleVerifyUser = (e) => {
+  // Verify password for the selected user
+  const handleVerifyUser = async (e) => {
     e.preventDefault();
-    
+
     if (!password.trim()) {
       setError('Password is required');
       return;
     }
-    
+
     if (selectedUser.password === password) {
       setError('');
       onLogin(selectedUser.username);
@@ -109,7 +123,7 @@ const AuthComponent = ({ onLogin }) => {
     }
   };
 
-  // Toggle login/register
+  // Toggle between login and register forms
   const toggleAuthMode = () => {
     setIsLogin(!isLogin);
     setError('');
