@@ -80,6 +80,18 @@ const AuthComponent = ({ onLogin }) => {
     setUsername(user.username);
   };
 
+  // Delete user
+  const handleDeleteUser = (e, usernameToDelete) => {
+    e.stopPropagation(); // Prevent triggering user selection
+    
+    // Filter out the user to delete
+    const updatedUsers = users.filter(user => user.username !== usernameToDelete);
+    
+    // Save to localStorage
+    localStorage.setItem('todoAppUsers', JSON.stringify(updatedUsers));
+    setUsers(updatedUsers);
+  };
+
   // Verify password
   const handleVerifyUser = (e) => {
     e.preventDefault();
@@ -171,13 +183,21 @@ const AuthComponent = ({ onLogin }) => {
           <>
             <div className="user-list">
               {users.map((user, index) => (
-                <button
-                  key={index}
-                  className="user-button"
-                  onClick={() => handleUserSelect(user)}
-                >
-                  {user.username}
-                </button>
+                <div key={index} className="user-button-container">
+                  <button
+                    className="user-button"
+                    onClick={() => handleUserSelect(user)}
+                  >
+                    {user.username}
+                    <span 
+                      className="user-delete-text"
+                      onClick={(e) => handleDeleteUser(e, user.username)}
+                      title="Delete user"
+                    >
+                      ✕
+                    </span>
+                  </button>
+                </div>
               ))}
             </div>
             <p className="or-divider">or</p>

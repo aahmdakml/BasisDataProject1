@@ -9,6 +9,7 @@
   --danger-color: #ff5252;
   --text-color: #fff;
   --text-highlight: #1ae0ee;
+  --text-done: #4caf50;
   --text-completed: #c5aeff;
   --text-incompleted: #ece033;
   --input-border: rgba(255, 255, 255, 0.3);
@@ -223,6 +224,11 @@ h1 {
   cursor: pointer;
 }
 
+
+.complete-btn:hover {
+  color: var(--text-done); 
+  transform: scale(1.1);
+}
 .todo-text:not(.completed) {
   color: var(--text-incompleted);
 }
@@ -240,6 +246,16 @@ h1 {
   color: var(--text-color);
   font-size: var(--font-size-small);
   transition: all 0.2s ease;
+}
+
+.todo-actions .action-btn {
+  width: 100%;  /* Make each button take up full width */
+  text-align: center; /* Center text */
+  padding: 0.4rem 0;  /* Match button height to text height */
+}
+
+.todo-actions .action-btn:hover {
+  transform: scale(1.1);  /* Ensure hover effect is applied consistently */
 }
 
 .edit-btn:hover {
@@ -552,13 +568,15 @@ h1 {
   }
   
   .todo-input {
-    margin-bottom: var(--spacing-md);
-    padding: 0.4rem 0.8rem;
+    padding: 0.4rem var(--spacing-md);
+    width: 100%; /* Make the input field match the available width */
+    margin-bottom: var(--spacing-sm); /* Slight margin at the bottom */
   }
   
   .todo-btn {
-    padding: 0.5rem 0.8rem;
-    font-size: 0.9rem;
+    width: auto;  /* Adjust width to match text size */
+    padding: 0.55rem var(--spacing-md);
+    font-size: var(--font-size-normal);
   }
   
   .add-btn {
@@ -689,8 +707,10 @@ h1 {
   }
   
   .edit-buttons {
-    width: 100%;
-    justify-content: space-between;
+    display: flex;
+    flex-direction: column;  /* Stack buttons vertically */
+    gap: var(--spacing-xs);  /* Tight gaps */
+    align-items: center;  /* Center the buttons */
   }
   
   .edit-form {
