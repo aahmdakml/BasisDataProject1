@@ -1,4 +1,4 @@
-const Pool = require("pg").Pool;
+const Pool = require('pg').Pool;
 
 const pool = new Pool({
     user: "postgres",
@@ -8,4 +8,9 @@ const pool = new Pool({
     database: "todos_app"
 });
 
-module.exports = pool;
+// Add error handling for pool connection  
+pool.on('error', (err) => {  
+    console.error('Unexpected error on idle client', err);  
+  });  
+
+module.exports = pool;  
