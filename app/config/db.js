@@ -1,0 +1,16 @@
+const Pool = require('pg').Pool;
+
+const pool = new Pool({
+  user: "postgres",
+  password: "rwhLeZLFYh",
+  host: "localhost",
+  port: 5432,
+  database: "Assessment"
+});
+
+// Add error handling for pool connection  
+pool.on('error', (err) => {  
+    console.error('Unexpected error on idle client', err);  
+  });  
+
+module.exports = pool;  
