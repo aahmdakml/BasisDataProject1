@@ -12,7 +12,7 @@ app.use(express.json());
 
 // show home page 
 app.get("/", (req, res) => {
-    res.json({msg:"Home Page"});
+    res.json({msg:"Home Page 2"});
 });
 
 //create a todo
